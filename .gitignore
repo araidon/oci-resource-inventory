@@ -1,0 +1,16 @@
+# Output CSVs and error logs from script runs
+oci_inventory_*.csv
+*.errors.log
+
+# macOS
+.DS_Store
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Local secrets (defense-in-depth; OCI auth lives in ~/.oci/ not in repo)
+.env
+*.pem
