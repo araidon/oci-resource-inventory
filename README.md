@@ -1,6 +1,16 @@
-# OCI Resource Inventory Script
+# OCI Resource Inventory
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 OCI テナンシー配下の主要リソースをスペック付きで CSV 出力するシェルスクリプトです。OCI Cloud Shell でそのまま実行できます。
+
+## 特徴
+
+- OCI Cloud Shell に Upload して即実行（追加インストール・認証設定不要）
+- Compute / Boot・Block Volume / Base DB / Autonomous DB / MySQL HeatWave / FSS / Object Storage / LB・NLB / OKE を 1 コマンドで横断
+- 各リソースの **OCPU / Memory / Storage** などスペック値を CSV に展開
+- Boot/Block ボリュームの **アタッチ先 (instance) / standalone** を自動判定
+- ベストエフォート方式: 個別 API 失敗でもスクリプトは継続し、失敗内容は `<出力CSV>.errors.log` に記録
 
 ## 使い方
 
@@ -62,6 +72,17 @@ bash oci_resource_inventory.sh -q -o quick.csv
 oci os bucket get --bucket-name <バケット名> --namespace-name <ネームスペース> \
   --fields approximateCount,approximateSize
 ```
+
+## 出力サンプル
+
+```csv
+Region,CompartmentName,...,ResourceType,ResourceName,Shape,OCPU,MemoryGB,StorageGB,...,Details
+ap-tokyo-1,sales,...,ComputeInstance,web-01,VM.Standard.E4.Flex,2.0,16.0,97,...,"boot=47GB,block=50GB"
+ap-tokyo-1,sales,...,BootVolume,web-01 (Boot Volume),,,,,47,...,attached_to=web-01
+ap-tokyo-1,sales,...,AutonomousDB,prod-adb,ECPU,2.0,,1024,...,workload=OLTP
+```
+
+実際の出力は 14 列です（一部を `...` で省略表記）。全列の定義は下記「[出力 CSV の列](#出力-csv-の列)」を参照してください。
 
 ---
 
@@ -143,6 +164,6 @@ B のケースでは、テナンシーレベルの read 権限が無くても動
 - **権限の影響**: 実行ユーザーが見えないコンパートメント／リソースは出力に含まれません
 - **コスト・使用量集計には非対応**: 本スクリプトは「現状一覧」の出力です。コスト見積りや使用量集計は OCI Cost Analysis / Usage API をご利用ください
 
-### サポート
+## ライセンス
 
-スクリプトに関する不具合・追加要望は、本配布元までご連絡ください。
+MIT License — 詳細は [LICENSE](LICENSE) を参照してください。
